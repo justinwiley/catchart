@@ -33,42 +33,56 @@ body {
   min-height: 45px;
 }
 
-.legend {
+.legend-text {
   background-color: white;
-
 }
 </style>
 <body>
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3.min.js"></script>
 
 <script>
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  var margin = {
+      top: 20,
+      right: 20,
+      bottom: 30,
+      left: 40
+    },
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-/* 
- * value accessor - returns the value to encode for a given data object.
- * scale - maps value to a visual display encoding, such as a pixel position.
- * map function - maps from data value to display value
- * axis - sets up axis
- */ 
+  /* 
+   * value accessor - returns the value to encode for a given data object.
+   * scale - maps value to a visual display encoding, such as a pixel position.
+   * map function - maps from data value to display value
+   * axis - sets up axis
+   */
 
   // setup x 
-  var xValue = function(d) { return d.Position;}, // data -> value
-  xScale = d3.scale.linear().range([0, width]), // value -> display
-  xMap = function(d) { return xScale(xValue(d));}, // data -> display
-  xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+  var xValue = function(d) {
+      return d.Position;
+    }, // data -> value
+    xScale = d3.scale.linear().range([0, width]), // value -> display
+    xMap = function(d) {
+      return xScale(xValue(d));
+    }, // data -> display
+    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
   // setup y
-  var yValue = function(d) { return d["Score"];}, // data -> value
-  yScale = d3.scale.linear().range([height, 0]), // value -> display
-  yMap = function(d) { return yScale(yValue(d));}, // data -> display
-  yAxis = d3.svg.axis().scale(yScale).orient("left"),
-  radiusScale = d3.scale.pow().domain([0,3.5]).range([3,10]),
-  opacityScale = d3.scale.pow().domain([0,3.5]).range([1,0.1]);
+  var yValue = function(d) {
+      return d.Score;
+    }, // data -> value
+    yScale = d3.scale.linear().range([height, 0]), // value -> display
+    yMap = function(d) {
+      return yScale(yValue(d));
+    }, // data -> display
+    yAxis = d3.svg.axis().scale(yScale).orient("left"),
+    radiusScale = d3.scale.pow().domain([0, 3.5]).range([3, 10]),
+    opacityScale = d3.scale.pow().domain([0, 3.5]).range([1, 0.1]);
 
   // setup fill color
-  var cValue = function(d) { return d['Position'];},
+  var cValue = function(d) {
+      return d['Position'];
+    },
     color = d3.scale.category10();
 
   // add the graph canvas to the body of the webpage
@@ -85,115 +99,196 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
 
   // load data
   d3.csv("cats.csv", function(error, data) {
-
-    // change string (from CSV) into number format
+    var positions = d3.set([]);
+    var scores = {};
     data.forEach(function(d) {
-      // d["Legend"] = d["Category Name"];
-      var cname = ( d['Category Name'].length < 50 ) ? d['Category Name'] : d['Category Name'].substring(0,50)+'...';
-      d["Legend"] = d.Position + '. ' + cname;
-
+      d.Score = +d.Score;
       d.Position = +d.Position;
-      d["Score"] = +d["Score"];
+      
+      cur_pos = d.Position;
+      var cname = (d['Category Name'].length < 40) ? d['Category Name'] : d['Category Name'].substring(0, 40) + '...';
+      d.Legend = d.Position + '. ' + cname;
+
+      positions.add(d.Position);
+
+      if(scores[d.Position] === undefined) scores[d.Position] = []; scores[d.Position].push(d.Score);
     });
 
+    xAxis.tickValues(positions.values());
+
     // don't want dots overlapping axis, so add in buffer to data domain
-    xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+2]);
-    yScale.domain([d3.min(data, yValue)-0.5, d3.max(data, yValue)]);
+    xScale.domain([d3.min(data, xValue) - 1, d3.max(data, xValue) + 3]);
+    yScale.domain([d3.min(data, yValue) - 0.5, d3.max(data, yValue)]);
 
     // x-axis
     svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
       .append("text")
-        .attr("class", "label")
-        .attr("x", width)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("Category");
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Category");
 
     // y-axis
     svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
+      .attr("class", "y axis")
+      .call(yAxis)
       .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Score");
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Score");
+
+    // draw avg line
+    var score_avgs = d3.map(scores).values().map(function(d,i){ return d3.mean(d)});
+    svg.selectAll(".avg-marker")
+      .attr("class", ".avg-marker")
+      .data(score_avgs)
+      .enter()
+      .append("rect")
+      .attr("x", function(d,i) {
+        return xScale(i) + 55;
+      })
+      .attr("y", function(d,i) {
+        return yScale(d);
+      })
+      .attr("width", 25)
+      .attr("height", 1)
+      .attr("class", "legend-rect")
+      .style("fill", '#ddd');
+
+    // draw avg text
+    svg.selectAll(".avg-marker")
+      .data(score_avgs)
+      .enter()
+      .append("text")
+      .text(function(d) { return d3.round(d,2); })
+      .attr("x", function(d,i) {
+        return xScale(i) + 58;
+      })
+      .attr("y", function(d,i) {
+        return yScale(d);
+      })
+      .attr("dx", "-3.2em")
+      .attr("dy", "0.3em")
+      .attr('font-size', '8')
+      .style("font-family", 'sans-serif')
+      .style("font-weight", 'lighter')
+      .style("stroke", '#aaa')
+      .on("mouseover", function(d) {
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        tooltip.html("Category Average: " + d3.round(d,2))
+        .style("left", (d3.event.pageX + 15) + "px")
+        .style("top", (d3.event.pageY) + "px");
+      })
+      .on("mouseout", function(d) {
+        tooltip.transition()
+          .duration(500)
+          .style("opacity", 0);
+      });
 
     // draw dots
     svg.selectAll(".dot")
-        .data(data)
+      .data(data)
       .enter().append("circle")
-        .attr("class", "dot")
-        .attr("r", function(d){ return radiusScale(d['CI']); })
-        .attr("cx", xMap)
-        .attr("cy", yMap)
-        .style("fill", function(d) { return color(cValue(d));}) 
-        .style("fill-opacity", function(d){ return opacityScale(Math.pow(d['CI'],1.4)); })
-        .style("stroke-opacity", function(d){ return opacityScale(Math.pow(d['CI'],1.4)); })
-        .on("mouseover", function(d) {
-            tooltip.transition()
-                 .duration(200)
-                 .style("opacity", .9);
-            tooltip.html(
-                  '<b>' + xValue(d) + '. ' + d["Category Name"] + '</b><br/>' +
-                  '<i>' + d['Org Name'] + '</i><br />' +
-                  "(Score: " + yValue(d) + " CI Upper: " + d['CI Upper'] + ' CI Lower: ' + d['CI Lower'] + ")"
-                  )
-                 .style("left", (d3.event.pageX + 15) + "px")
-                 .style("top", (d3.event.pageY) + "px");
-        })
-        .on("mouseout", function(d) {
-            tooltip.transition()
-                 .duration(500)
-                 .style("opacity", 0);
-        });
+      .attr("class", "dot")
+      .attr("r", function(d) {
+        return radiusScale(d['CI']);
+      })
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      .style("fill", function(d) {
+        return color(cValue(d));
+      })
+      .style("fill-opacity", function(d) {
+        return opacityScale(Math.pow(d['CI'], 1.4));
+      })
+      .style("stroke-opacity", function(d) {
+        return opacityScale(Math.pow(d['CI'], 1.4));
+      })
+      .on("mouseover", function(d) {
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        tooltip.html(
+            '<b>' + xValue(d) + '. ' + d["Category Name"] + '</b><br/>' +
+            '<i>' + d['Org Name'] + '</i><br />' +
+            "(Score: " + yValue(d) + " CI Upper: " + d['CI Upper'] + ' CI Lower: ' + d['CI Lower'] + ")"
+          )
+          .style("left", (d3.event.pageX + 15) + "px")
+          .style("top", (d3.event.pageY) + "px");
+      })
+      .on("mouseout", function(d) {
+        tooltip.transition()
+          .duration(500)
+          .style("opacity", 0);
+      });
 
     // draw legend
     var legend = svg.selectAll(".legend")
-        .data(color.domain())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+      .data(color.domain())
+      .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) {
+        return "translate(0," + i * 20 + ")";
+      });
 
     // draw legend colored rectangles
     legend.append("rect")
-        .attr("x", width - 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("class", "legend-rect")
-        .style("fill", color);
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .attr("class", "legend-rect")
+      .style("fill", color);
 
-    var catnames = d3.set(data.map(function(d){
+    var catnames = d3.set(data.map(function(d) {
       return d["Legend"];
     })).values();
 
     // draw legend text
     legend.append("text")
-        .data(catnames)
-        .attr("x", width - 24)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .attr("class", "legend-text")
-        .style("opacity", .05)
-        .style("text-anchor", "end")
-        .text(function(d){ return d;})
+      .data(catnames)
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .attr("class", "legend-text")
+      .style("opacity", .40)
+      .style("text-anchor", "end")
+      .text(function(d) {
+        return d;
+      })
 
+    // hide and show on mouse over
     var legend_rect = svg.selectAll(".legend-rect");
     var legend_text = svg.selectAll(".legend-text");
-    // hide and show on mouse over
+    var dots = svg.selectAll(".dot");
+
     legend_rect.on("mouseover", function(d) {
-        legend_text.transition().style("opacity", .9).duration(500);
+      dots.transition().style("opacity", 0.2).duration(300);
+      legend_text.transition().style("opacity", 1).duration(500);
     })
     legend_rect.on("mouseout", function(d) {
-        legend_text.transition().style("opacity", .05).duration(500);
+      legend_text.transition().style("opacity", .4).duration(300);
+      dots.transition().style("opacity", 1).duration(500);
     })
 
-  });
+  }); // end csv load
+
+  // console.log(d3.mean(scores))
+  // svg.append("line")
+  //   .attr("x1", xScale(0))
+  //   .attr("x2", xScale(10))
+  //   .attr("y1", yScale(d3.mean(scores)))
+  //   .attr("y2", yScale(d3.mean(scores)))
+  //   .attr("class", "avg")
+  //   .style("stroke", "black")
 
 </script>
 </body>
