@@ -83,7 +83,7 @@ body {
   var cValue = function(d) {
       return d['Position'];
     },
-    color = d3.scale.category10();
+    color = d3.scale.category20c();
 
   // add the graph canvas to the body of the webpage
   var svg = d3.select("body").append("svg")
@@ -144,6 +144,24 @@ body {
       .style("text-anchor", "end")
       .text("Score");
 
+    // draw column bars
+    svg.selectAll(".col-bar")
+      .data(data)
+      .enter().append("rect")
+      .attr("class", "col-bar")
+      .attr("width", 50)
+      .attr("height", height)
+      .attr("x", function(d) { return xScale(xValue(d)) - 25 })
+      .attr("y", margin.top - 20)
+      .style("fill", function(d) {
+        return color(cValue(d));
+      })
+      .style("stroke", function(d) {
+        return color(cValue(d));
+      })
+      .style("fill-opacity", 0.03)
+      .style("stroke-opacity", 0.05)
+
     // draw avg line
     var score_avgs = d3.map(scores).values().map(function(d,i){ return d3.mean(d)});
     svg.selectAll(".avg-marker")
@@ -152,7 +170,7 @@ body {
       .enter()
       .append("rect")
       .attr("x", function(d,i) {
-        return xScale(i) + 55;
+        return xScale(i) + 57;
       })
       .attr("y", function(d,i) {
         return yScale(d);
