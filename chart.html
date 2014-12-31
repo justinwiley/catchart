@@ -31,6 +31,7 @@ body {
   border: 1px solid #ccc;
   padding: 0.5em;
   min-height: 45px;
+  border-radius: 1em;
 }
 
 .legend-text {
@@ -84,6 +85,8 @@ body {
       return d['Position'];
     },
     color = d3.scale.category20c();
+
+  var colOpacity = 0.03;
 
   // add the graph canvas to the body of the webpage
   var svg = d3.select("body").append("svg")
@@ -148,6 +151,9 @@ body {
     svg.selectAll(".col-bar")
       .data(data)
       .enter().append("rect")
+      .attr("id", function(d) {
+        return "col-bar-" + d['Position'];
+      })
       .attr("class", "col-bar")
       .style("fill", function(d) {
         return color(cValue(d));
@@ -155,7 +161,7 @@ body {
       .style("stroke", function(d) {
         return color(cValue(d));
       })
-      .style("fill-opacity", 0.03)
+      .style("fill-opacity", 0)
       .style("stroke-opacity", 0.05)
       .attr("x", function(d) { return xScale(xValue(d)) - 25 })
       .attr("y", margin.top - 20)
@@ -228,6 +234,9 @@ body {
       .data(data)
       .enter().append("circle")
       .attr("class", "dot")
+      .attr("class", function(d) {
+        return "dot dot-" + d['Position'];
+      })
       .attr("r", function(d) {
         return radiusScale(d['CI']);
       })
@@ -257,6 +266,9 @@ body {
           .duration(500)
           .style("opacity", 0);
       })
+      .attr("cx", 0)
+      .transition()
+      .duration(500)
       .attr("cx", xMap)
       .attr("cy", 0)
       .transition()
@@ -287,6 +299,7 @@ body {
     // draw legend text
     legend.append("text")
       .data(catnames)
+      .attr('x', 0)
       .attr("x", width - 24)
       .attr("y", 9)
       .attr("dy", ".35em")
@@ -303,24 +316,16 @@ body {
     var dots = svg.selectAll(".dot");
 
     legend_rect.on("mouseover", function(d) {
-      dots.transition().style("opacity", 0.2).duration(300);
       legend_text.transition().style("opacity", 1).duration(500);
+      svg.selectAll('#col-bar-' + d).transition().style('stroke-opacity',0.5).duration(100);
     })
     legend_rect.on("mouseout", function(d) {
       legend_text.transition().style("opacity", .4).duration(300);
-      dots.transition().style("opacity", 1).duration(500);
+      svg.selectAll('.col-bar').transition().style('stroke-opacity',0.05).duration(500);
     })
 
-  }); // end csv load
 
-  // console.log(d3.mean(scores))
-  // svg.append("line")
-  //   .attr("x1", xScale(0))
-  //   .attr("x2", xScale(10))
-  //   .attr("y1", yScale(d3.mean(scores)))
-  //   .attr("y2", yScale(d3.mean(scores)))
-  //   .attr("class", "avg")
-  //   .style("stroke", "black")
+  }); // end csv load
 
 </script>
 </body>
