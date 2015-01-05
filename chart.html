@@ -38,8 +38,19 @@ body {
   background-color: white;
 }
 </style>
-<body>
+<head>
 <script src="d3.min.js"></script>
+</head>
+
+<body>
+
+<div id="chart-container">
+  <span id='chart-instructions'>
+    Double-click to zoom in. <button id="zoom-out">Reset Zoom</button>
+  </span>
+  <div id="chart"></div>
+</div>
+
 
 <script>
   var margin = {
@@ -57,6 +68,19 @@ body {
    * map function - maps from data value to display value
    * axis - sets up axis
    */
+
+  var zoom = d3.behavior.zoom()
+    .scaleExtent([1, 10])
+    .on("zoom", function() {
+      svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+  );
+
+  d3.select('#zoom-out')
+    .on("click", function(){ 
+      zoom.translate([margin.left,margin.top]).scale(1);
+      svg.attr('transform', 'translate(' + zoom.translate() + ') scale(' + zoom.scale() + ')');
+    });
 
   // setup x 
   var xValue = function(d) {
@@ -86,14 +110,13 @@ body {
     },
     color = d3.scale.category20c();
 
-  var colOpacity = 0.03;
-
   // add the graph canvas to the body of the webpage
-  var svg = d3.select("body").append("svg")
+  var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .call(zoom);   // setup zoom
 
   // add the tooltip area to the webpage
   var tooltip = d3.select("body").append("div")
@@ -102,8 +125,8 @@ body {
 
   // load data
   d3.csv("cats.csv", function(error, data) {
-    var positions = d3.set([]);
-    var scores = {};
+    var positions = d3.set([]);   // a unique set of category positions / IDs
+    var scores = {};              // category scores, by position
     data.forEach(function(d) {
       d.Score = +d.Score;
       d.Position = +d.Position;
