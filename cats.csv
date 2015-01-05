@@ -1,31 +1,31 @@
 Org Name,Category Name,Position,Score,CI Upper,CI Lower,CI
-UNC GI Chapel Hill,Patient Safety,1,3.75,5.00,1.56,2.19
-UNC GI Chapel Hill,Processes of Care and Efficiency ,2,4.65,5.00,2.68,1.97
-UNC GI Chapel Hill,Institutional Ethos,3,4.52,5.00,2.27,2.25
-UNC GI Chapel Hill,Comfort/Facility,4,3.64,5.00,1.26,2.39
-UNC GI Chapel Hill,Provider Expertise,5,4.81,5.00,2.51,2.29
-UNC GI Chapel Hill,Provider Interpersonal Skills,6,4.39,5.00,3.74,0.65
-UNC GI Chapel Hill,Communication,7,4.38,5.00,3.62,0.76
-UNC GI Chapel Hill,Patient Centered Care,8,4.78,5.00,2.50,2.29
-UNC GI Chapel Hill,Other Members of the Team,9,4.79,5.00,3.76,1.03
-UNC GI Chapel Hill,Overall Patient Experience,10,4.28,5.00,2.39,1.89
-UNC GI Meadowmont,Patient Safety,1,4.85,5.00,2.60,2.25
-UNC GI Meadowmont,Processes of Care and Efficiency ,2,3.40,5.00,1.17,2.24
-UNC GI Meadowmont,Institutional Ethos,3,3.38,4.00,2.76,0.62
-UNC GI Meadowmont,Comfort/Facility,4,3.94,4.88,3.00,0.94
-UNC GI Meadowmont,Provider Expertise,5,3.74,5.00,1.52,2.22
-UNC GI Meadowmont,Provider Interpersonal Skills,6,4.29,5.00,2.01,2.28
-UNC GI Meadowmont,Communication,7,3.32,3.85,2.79,0.53
-UNC GI Meadowmont,Patient Centered Care,8,3.60,5.00,1.75,1.85
-UNC GI Meadowmont,Other Members of the Team,9,4.45,5.00,3.84,0.61
-UNC GI Meadowmont,Overall Patient Experience,10,4.23,4.95,3.52,0.72
-UNC GI Hillsborough,Patient Safety,1,3.92,5.00,1.45,2.46
-UNC GI Hillsborough,Processes of Care and Efficiency ,2,4.50,5.00,2.61,1.89
-UNC GI Hillsborough,Institutional Ethos,3,4.66,5.00,2.63,2.03
-UNC GI Hillsborough,Comfort/Facility,4,3.05,3.96,2.15,0.90
-UNC GI Hillsborough,Provider Expertise,5,3.98,5.00,2.10,1.89
-UNC GI Hillsborough,Provider Interpersonal Skills,6,3.89,5.00,1.90,1.99
-UNC GI Hillsborough,Communication,7,3.94,5.00,2.30,1.64
-UNC GI Hillsborough,Patient Centered Care,8,4.43,5.00,3.08,1.35
-UNC GI Hillsborough,Other Members of the Team,9,3.19,3.92,2.46,0.73
-UNC GI Hillsborough,Overall Patient Experience,10,4.08,5.00,2.67,1.41
+UNC GI Procedures - Chapel Hill,Processes of Care and Efficiency,2,4.17,4.56,3.77,0.40
+UNC GI Procedures - Chapel Hill,Patient Safety,1,4.61,4.94,4.27,0.33
+UNC GI Procedures - Chapel Hill,Institutional Ethos,3,4.49,4.83,4.15,0.34
+UNC GI Procedures - Chapel Hill,Comfort/Facility,4,4.13,4.63,3.62,0.51
+UNC GI Procedures - Chapel Hill,Provider Expertise,5,4.82,5.36,4.27,0.54
+UNC GI Procedures - Chapel Hill,Provider Interpersonal Skills,6,4.59,5.33,3.84,0.75
+UNC GI Procedures - Chapel Hill,Communication,7,4.52,5.16,3.87,0.64
+UNC GI Procedures - Chapel Hill,Patient Centered Care,8,4.60,5.24,3.97,0.63
+UNC GI Procedures - Chapel Hill,Other Members of the Team,9,4.44,4.70,4.17,0.26
+UNC GI Procedures - Chapel Hill,Overall Patient Experience,10,4.20,4.44,3.96,0.24
+UNC GI Procedures - Meadowmont,Patient Safety,1,4.74,5.48,4.00,0.74
+UNC GI Procedures - Meadowmont,Processes of Care and Efficiency,2,4.46,4.65,4.26,0.19
+UNC GI Procedures - Meadowmont,Institutional Ethos,3,4.62,4.82,4.42,0.20
+UNC GI Procedures - Meadowmont,Comfort/Facility,4,4.35,4.58,4.12,0.23
+UNC GI Procedures - Meadowmont,Provider Expertise,5,4.70,5.25,4.14,0.56
+UNC GI Procedures - Meadowmont,Provider Interpersonal Skills,6,4.66,5.17,4.15,0.51
+UNC GI Procedures - Meadowmont,Communication,7,4.60,5.25,3.94,0.66
+UNC GI Procedures - Meadowmont,Patient Centered Care,8,4.64,5.15,4.13,0.51
+UNC GI Procedures - Meadowmont,Other Members of the Team,9,4.50,4.68,4.32,0.18
+UNC GI Procedures - Meadowmont,Overall Patient Experience,10,4.31,4.52,4.11,0.20
+UNC GI Procedures - Hillsborough,Overall Patient Experience,10,4.50,4.92,4.08,0.42
+UNC GI Procedures - Hillsborough,Other Members of the Team,9,4.51,4.95,4.06,0.45
+UNC GI Procedures - Hillsborough,Patient Centered Care,8,4.67,5.38,3.95,0.71
+UNC GI Procedures - Hillsborough,Provider Interpersonal Skills,6,4.67,5.55,3.80,0.88
+UNC GI Procedures - Hillsborough,Processes of Care and Efficiency,2,4.51,5.19,3.84,0.67
+UNC GI Procedures - Hillsborough,Patient Safety,1,4.85,5.70,4.00,0.85
+UNC GI Procedures - Hillsborough,Institutional Ethos,3,4.68,5.07,4.29,0.39
+UNC GI Procedures - Hillsborough,Comfort/Facility,4,4.66,5.24,4.08,0.58
+UNC GI Procedures - Hillsborough,Provider Expertise,5,4.92,5.77,4.07,0.85
+UNC GI Procedures - Hillsborough,Communication,7,4.48,5.10,3.85,0.63
