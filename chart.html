@@ -110,6 +110,7 @@ body {
     },
     color = d3.scale.category20c();
 
+
   // add the graph canvas to the body of the webpage
   var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -139,6 +140,30 @@ body {
 
       if(scores[d.Position] === undefined) scores[d.Position] = []; scores[d.Position].push(d.Score);
     });
+
+    var means = d3.map(scores).values().map(function(d,i){ return d3.mean(d)});
+    var upper_devs = d3.map(scores).values().map(function(d,i){ return d3.mean(d) + d3.deviation(d)});
+    var lower_devs = d3.map(scores).values().map(function(d,i){ return d3.mean(d) - d3.deviation(d)});
+
+    var dotColor = function(d) {
+      var mean = d3.mean(scores[d.Position]);
+      var upper_dev = mean + d3.deviation(scores[d.Position]);
+      var lower_dev = mean - d3.deviation(scores[d.Position]);
+
+      if (d['Score'] < lower_dev - 0.01) {
+        return 'red';
+      }
+      else if (d['Score'] < lower_dev) {
+        return 'yellow';
+      }
+      else if (d['Score'] > upper_dev) {
+        return 'green';
+      }
+      else {
+        return 'grey';
+      }
+    };
+
 
     xAxis.tickValues(positions.values());
 
@@ -194,63 +219,68 @@ body {
       .duration(500)
       .attr("height", height)
 
-    // draw avg line
-    var score_avgs = d3.map(scores).values().map(function(d,i){ return d3.mean(d)});
-    svg.selectAll(".avg-marker")
-      .attr("class", ".avg-marker")
-      .data(score_avgs)
-      .enter()
-      .append("rect")
-      .attr("width", 25)
-      .attr("height", 1)
-      .attr("class", "legend-rect")
-      .style("fill", '#ddd')
-      .attr("x", function(d,i) {
-        return xScale(i) + 57;
-      })
-      .attr("y", 0)
-      .transition()
-      .duration(1000)
-      .attr("y", function(d,i) {
-        return yScale(d);
-      })
+    var drawMarker = function(svg, vals, name, desc) {
+      var classname = '.' + name + '-marker';
 
+      // draw avg line
+      svg.selectAll(classname)
+        .attr("class", classname)
+        .data(vals)
+        .enter()
+        .append("rect")
+        .attr("width", 25)
+        .attr("height", 1)
+        .attr("class", "legend-rect")
+        .style("fill", '#ddd')
+        .attr("x", function(d,i) {
+          return xScale(i) + 57;
+        })
+        .attr("y", 0)
+        .transition()
+        .duration(1000)
+        .attr("y", function(d,i) {
+          return yScale(d);
+        })
 
-    // draw avg text
-    svg.selectAll(".avg-marker")
-      .data(score_avgs)
-      .enter()
-      .append("text")
-      .text(function(d) { return d3.round(d,2); })
-      .attr("dx", "-3.2em")
-      .attr("dy", "0.3em")
-      .attr('font-size', '8')
-      .style("font-family", 'sans-serif')
-      .style("font-weight", 'lighter')
-      .style("stroke", '#aaa')
-      .on("mouseover", function(d) {
-        tooltip.transition()
-          .duration(200)
-          .style("opacity", .9);
-        tooltip.html("Category Average: " + d3.round(d,2))
-        .style("left", (d3.event.pageX + 15) + "px")
-        .style("top", (d3.event.pageY) + "px");
-      })
-      .on("mouseout", function(d) {
-        tooltip.transition()
-          .duration(500)
-          .style("opacity", 0);
-      })
-      .attr("x", function(d,i) {
-        return xScale(i) + 58;
-      })
-      .attr("y", 0)
-      .transition()
-      .duration(900)
-      .attr("y", function(d,i) {
-        return yScale(d);
-      })
+      // draw avg text
+      svg.selectAll(classname)
+        .data(vals)
+        .enter()
+        .append("text")
+        .text(function(d) { return d3.round(d,2); })
+        .attr("dx", "-3.2em")
+        .attr("dy", "0.3em")
+        .attr('font-size', '8')
+        .style("font-family", 'sans-serif')
+        .style("font-weight", 'lighter')
+        .style("stroke", '#aaa')
+        .on("mouseover", function(d) {
+          tooltip.transition()
+            .duration(200)
+            .style("opacity", .9);
+          tooltip.html(desc + d3.round(d,2))
+          .style("left", (d3.event.pageX + 15) + "px")
+          .style("top", (d3.event.pageY) + "px");
+        })
+        .on("mouseout", function(d) {
+          tooltip.transition()
+            .duration(500)
+            .style("opacity", 0);
+        })
+        .attr("x", function(d,i) {
+          return xScale(i) + 58;
+        })
+        .attr("y", 0)
+        .transition()
+        .duration(900)
+        .attr("y", function(d,i) {
+          return yScale(d);
+        })
+    };
 
+    drawMarker(svg, means, "average", 'Category Average: ');
+    drawMarker(svg, upper_devs, "stdev-upper", 'Standard Deviation Upper: ');
+    drawMarker(svg, lower_devs, "stdev-lower", 'Standard Deviation Lower: ');
 
     // draw dots
     svg.selectAll(".dot")
@@ -261,10 +291,10 @@ body {
         return "dot dot-" + d['Position'];
       })
       .attr("r", function(d) {
-        return radiusScale(d['CI']);
+        return 4;
       })
       .style("fill", function(d) {
-        return color(cValue(d));
+        return dotColor(d);
       })
       .style("fill-opacity", function(d) {
         return opacityScale(Math.pow(d['CI'], 1.4));
